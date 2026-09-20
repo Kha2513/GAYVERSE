@@ -1,0 +1,788 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Buildverse Studio - yoimdiddyhoiwyoudoing by didy</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { overflow: hidden; font-family: 'Comic Sans MS', 'Chalkboard SE', 'Courier New', sans-serif; user-select: none; background: #c0c0c0; color: #000; }
+
+        #studio-container {
+            display: flex;
+            flex-direction: column;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #top-toolbar {
+            height: 40px;
+            background: #d4d0c8;
+            border-bottom: 2px solid #808080;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .tool-btn {
+            padding: 4px 10px;
+            background: #ece9d8;
+            color: #000;
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tool-btn:active, .tool-btn.active {
+            border-color: #808080 #ffffff #ffffff #808080;
+            background: #e0e0e0;
+        }
+
+        .btn-save { background: #d4f0d4; }
+        .btn-tool { background: #faebd7; }
+
+        #main-workspace {
+            display: flex;
+            flex: 1;
+            position: relative;
+            height: calc(100vh - 40px);
+        }
+
+        #viewport-container {
+            flex: 1;
+            height: 100%;
+            position: relative;
+            background: #000;
+        }
+
+        .studio-panel {
+            width: 250px;
+            background: #ece9d8;
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .panel-header {
+            background: linear-gradient(90deg, #0a246a, #a6caf0);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-body {
+            flex: 1;
+            padding: 6px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+
+        .tree-node {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 4px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .tree-node:hover {
+            background: #316ac5;
+            color: #ffffff;
+        }
+
+        .tree-node.selected {
+            background: #0a246a;
+            color: #ffffff;
+        }
+
+        .prop-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 11px;
+        }
+
+        .prop-row label { font-weight: bold; }
+
+        .prop-row input {
+            width: 110px;
+            padding: 2px;
+            font-size: 11px;
+            border: 1px solid #7f9db9;
+            font-family: inherit;
+        }
+
+        #color-palette {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 3px;
+            margin-top: 8px;
+            border: 1px solid #7f9db9;
+            padding: 4px;
+            background: #fff;
+        }
+
+        .color-swatch {
+            height: 20px;
+            border: 1px solid #000;
+            cursor: pointer;
+        }
+
+        .color-swatch:hover {
+            outline: 2px solid #000000;
+        }
+
+        #no-args-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            color: #ffffff;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            font-weight: bold;
+            z-index: 1000;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #status-bar {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #000;
+            padding: 2px 6px;
+            font-size: 11px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="no-args-overlay">
+    <div style="font-size: 26px; margin-bottom: 10px;">Buildverse Studio</div>
+    <div></div>
+</div>
+
+<div id="studio-container">
+    <div id="top-toolbar">
+        <button class="tool-btn" onclick="insertBlock()">Insert Part</button>
+        <button class="tool-btn btn-tool" onclick="insertSwordTool()">Insert Sword Tool</button>
+        <button class="tool-btn active" id="btn-select" onclick="setTool('select')">Select</button>
+        <button class="tool-btn" id="btn-move" onclick="setTool('move')">Move</button>
+        <button class="tool-btn" id="btn-scale" onclick="setTool('scale')">Scale</button>
+        <button class="tool-btn" onclick="deleteSelected()">Delete</button>
+        <div style="display: flex; align-items: center; gap: 4px; margin-left: 10px; font-size: 12px; font-weight: bold;">
+            <label for="save-name-input">Filename:</label>
+            <input type="text" id="save-name-input" value="yoimdiddyhoiwyoudoing" style="padding: 2px; font-size: 11px; width: 100px; border: 1px solid #7f9db9; font-family: inherit;" />
+        </div>
+        <div style="flex: 1;"></div>
+        <button class="tool-btn btn-save" onclick="saveMap()">Save Direct</button>
+        <button class="tool-btn" onclick="leaveStudio()">Exit</button>
+    </div>
+
+    <div id="main-workspace">
+        <div id="viewport-container">
+            <div id="status-bar">Tool: Select | Ready</div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; width: 260px;" id="sidebar-container">
+            <div class="studio-panel" style="height: 50%;">
+                <div class="panel-header"><span>Explorer</span></div>
+                <div class="panel-body">
+                    <div class="tree-node" onclick="selectRoot()">
+                        <span>Workspace</span>
+                    </div>
+                    <div class="tree-children" id="workspace-tree" style="margin-left: 12px;"></div>
+                </div>
+            </div>
+
+            <div class="studio-panel" style="height: 50%;">
+                <div class="panel-header"><span>Properties</span></div>
+                <div class="panel-body" id="properties-panel">
+                    <p style="font-style: italic; color: #666;">No item selected.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+    function leaveStudio() {
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.location.href = '/';
+        }
+    }
+
+    const serverMapData = decodeURIComponent("");
+    let safeCreator = "didy";
+    let safeGame = "yoimdiddyhoiwyoudoing";
+    let safePlayer = "ThatLetterD";
+    let isStudioRunning = true;
+    let hasSwordTool = false;
+
+    const retroPalette = [
+        "#A3A2A5", "#C4281C", "#0D69AC", "#F5CD30", "#1B2A35",
+        "#4B974B", "#DAE3E5", "#6E99CA", "#DA70D6", "#A4BDC6",
+        "#27462D", "#635F62", "#FBEC5D", "#FFFFFF", "#000000"
+    ];
+
+    const container = document.getElementById('viewport-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87ceeb);
+
+    const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(20, 20, 20);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    dirLight.position.set(20, 40, 20);
+    scene.add(dirLight);
+
+    const gridHelper = new THREE.GridHelper(200, 100, 0x000000, 0x444444);
+    gridHelper.position.y = -0.01;
+    gridHelper.visible = false;
+    scene.add(gridHelper);
+
+    const parts = [];
+    let selectedPart = null;
+    let currentTool = 'select';
+    let partCounter = 1;
+
+    const selectionBox = new THREE.BoxHelper(new THREE.Mesh(), 0xffff00);
+    selectionBox.material.depthTest = false;
+    selectionBox.material.depthWrite = false;
+    selectionBox.renderOrder = 999;
+    selectionBox.visible = false;
+    scene.add(selectionBox);
+
+    const moveGizmoGroup = new THREE.Group();
+    moveGizmoGroup.renderOrder = 999;
+    moveGizmoGroup.visible = false;
+    scene.add(moveGizmoGroup);
+    const moveGizmoHandles = [];
+
+    function buildMoveGizmoArrow(colorHex, axisName) {
+        const group = new THREE.Group();
+        const mat = new THREE.MeshBasicMaterial({ color: colorHex, depthTest: false, depthWrite: false });
+
+        const cylGeo = new THREE.CylinderGeometry(0.08, 0.08, 2, 8);
+        const cylMesh = new THREE.Mesh(cylGeo, mat);
+        cylMesh.position.y = 2.0; 
+        cylMesh.renderOrder = 999;
+        group.add(cylMesh);
+
+        const coneGeo = new THREE.ConeGeometry(0.25, 0.6, 8);
+        const coneMesh = new THREE.Mesh(coneGeo, mat);
+        coneMesh.position.y = 3.3; 
+        coneMesh.renderOrder = 999;
+        group.add(coneMesh);
+
+        if (axisName === 'X') group.rotation.z = -Math.PI / 2;
+        if (axisName === 'Z') group.rotation.x = Math.PI / 2;
+
+        cylMesh.userData = { isGizmo: true, type: 'move', axis: axisName };
+        coneMesh.userData = { isGizmo: true, type: 'move', axis: axisName };
+
+        moveGizmoHandles.push(cylMesh, coneMesh);
+        moveGizmoGroup.add(group);
+    }
+    buildMoveGizmoArrow(0xff0000, 'X');
+    buildMoveGizmoArrow(0x00ff00, 'Y');
+    buildMoveGizmoArrow(0x0000ff, 'Z');
+
+    const scaleGizmoGroup = new THREE.Group();
+    scaleGizmoGroup.renderOrder = 999;
+    scaleGizmoGroup.visible = false;
+    scene.add(scaleGizmoGroup);
+    const scaleGizmoHandles = [];
+
+    function buildScaleGizmoHandle(colorHex, axisName) {
+        const group = new THREE.Group();
+        const mat = new THREE.MeshBasicMaterial({ color: colorHex, depthTest: false, depthWrite: false });
+
+        const lineGeo = new THREE.CylinderGeometry(0.06, 0.06, 2, 8);
+        const lineMesh = new THREE.Mesh(lineGeo, mat);
+        lineMesh.position.y = 2.0;
+        lineMesh.renderOrder = 999;
+        group.add(lineMesh);
+
+        const boxGeo = new THREE.BoxGeometry(0.4, 0.4, 0.4);
+        const boxMesh = new THREE.Mesh(boxGeo, mat);
+        boxMesh.position.y = 3.1;
+        boxMesh.renderOrder = 999;
+        group.add(boxMesh);
+
+        if (axisName === 'X') group.rotation.z = -Math.PI / 2;
+        if (axisName === 'Z') group.rotation.x = Math.PI / 2;
+
+        lineMesh.userData = { isGizmo: true, type: 'scale', axis: axisName };
+        boxMesh.userData = { isGizmo: true, type: 'scale', axis: axisName };
+
+        scaleGizmoHandles.push(lineMesh, boxMesh);
+        scaleGizmoGroup.add(group);
+    }
+    buildScaleGizmoHandle(0xff0000, 'X');
+    buildScaleGizmoHandle(0x00ff00, 'Y');
+    buildScaleGizmoHandle(0x0000ff, 'Z');
+
+    let isMouseDown = false;
+    let isDraggingGizmo = false;
+    let activeGizmoAxis = null;
+    let activeGizmoType = null;
+    let previousMousePosition = { x: 0, y: 0 };
+    let cameraYaw = Math.PI / 4;
+    let cameraPitch = Math.PI / 6;
+    let cameraDistance = 35;
+    let targetLook = new THREE.Vector3(0, 0, 0);
+
+    const keysPressed = {};
+    window.addEventListener('keydown', (e) => {
+        if (document.activeElement.tagName === 'INPUT') return;
+        keysPressed[e.key.toLowerCase()] = true;
+    });
+    window.addEventListener('keyup', (e) => {
+        if (document.activeElement.tagName === 'INPUT') return;
+        keysPressed[e.key.toLowerCase()] = false;
+    });
+
+    function updateCameraPosition() {
+        const camX = targetLook.x + cameraDistance * Math.sin(cameraYaw) * Math.cos(cameraPitch);
+        const camY = targetLook.y + cameraDistance * Math.sin(cameraPitch);
+        const camZ = targetLook.z + cameraDistance * Math.cos(cameraYaw) * Math.cos(cameraPitch);
+        camera.position.set(camX, camY, camZ);
+        camera.lookAt(targetLook);
+    }
+    updateCameraPosition();
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    const dragPlane = new THREE.Plane();
+    const planeIntersection = new THREE.Vector3();
+
+    function updateGizmoTransform() {
+        if (selectedPart && !selectedPart.userData.isToolItem) {
+            moveGizmoGroup.position.copy(selectedPart.position);
+            scaleGizmoGroup.position.copy(selectedPart.position);
+
+            moveGizmoGroup.visible = (currentTool === 'move');
+            scaleGizmoGroup.visible = (currentTool === 'scale');
+        } else {
+            moveGizmoGroup.visible = false;
+            scaleGizmoGroup.visible = false;
+        }
+    }
+
+    container.addEventListener('mousedown', (e) => {
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / container.clientWidth) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / container.clientHeight) * 2 + 1;
+
+        if (e.button === 2 || e.button === 1) {
+            isMouseDown = true;
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+            return;
+        }
+
+        if (e.button === 0) {
+            raycaster.setFromCamera(mouse, camera);
+
+            if (selectedPart && !selectedPart.userData.isToolItem && (currentTool === 'move' || currentTool === 'scale')) {
+                const activeHandles = (currentTool === 'move') ? moveGizmoHandles : scaleGizmoHandles;
+                const gizmoHits = raycaster.intersectObjects(activeHandles);
+                if (gizmoHits.length > 0) {
+                    isDraggingGizmo = true;
+                    activeGizmoAxis = gizmoHits[0].object.userData.axis;
+                    activeGizmoType = gizmoHits[0].object.userData.type;
+
+                    const camDir = new THREE.Vector3();
+                    camera.getWorldDirection(camDir);
+                    dragPlane.setFromNormalAndCoplanarPoint(camDir.negate(), selectedPart.position);
+                    return;
+                }
+            }
+
+            const intersects = raycaster.intersectObjects(parts);
+            if (intersects.length > 0) {
+                selectPart(intersects[0].object);
+            } else {
+                selectPart(null);
+            }
+        }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (isMouseDown) {
+            const deltaX = e.clientX - previousMousePosition.x;
+            const deltaY = e.clientY - previousMousePosition.y;
+            cameraYaw += deltaX * 0.005;
+            cameraPitch -= deltaY * 0.005;
+            cameraPitch = Math.max(0.05, Math.min(Math.PI / 2 - 0.05, cameraPitch));
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+            updateCameraPosition();
+            return;
+        }
+
+        if (isDraggingGizmo && selectedPart && !selectedPart.userData.isToolItem && activeGizmoAxis) {
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((e.clientX - rect.left) / container.clientWidth) * 2 - 1;
+            mouse.y = -((e.clientY - rect.top) / container.clientHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            if (raycaster.ray.intersectPlane(dragPlane, planeIntersection)) {
+                if (activeGizmoType === 'move') {
+                    if (activeGizmoAxis === 'X') selectedPart.position.x = Math.round(planeIntersection.x * 2) / 2;
+                    if (activeGizmoAxis === 'Y') selectedPart.position.y = Math.max(selectedPart.userData.sy / 2, Math.round(planeIntersection.y * 2) / 2);
+                    if (activeGizmoAxis === 'Z') selectedPart.position.z = Math.round(planeIntersection.z * 2) / 2;
+                } else if (activeGizmoType === 'scale') {
+                    const diffX = Math.abs(planeIntersection.x - selectedPart.position.x) * 2;
+                    const diffY = Math.abs(planeIntersection.y - selectedPart.position.y) * 2;
+                    const diffZ = Math.abs(planeIntersection.z - selectedPart.position.z) * 2;
+
+                    if (activeGizmoAxis === 'X') selectedPart.userData.sx = Math.max(0.5, Math.round(diffX * 2) / 2);
+                    if (activeGizmoAxis === 'Y') selectedPart.userData.sy = Math.max(0.5, Math.round(diffY * 2) / 2);
+                    if (activeGizmoAxis === 'Z') selectedPart.userData.sz = Math.max(0.5, Math.round(diffZ * 2) / 2);
+
+                    selectedPart.geometry.dispose();
+                    selectedPart.geometry = new THREE.BoxGeometry(selectedPart.userData.sx, selectedPart.userData.sy, selectedPart.userData.sz);
+                }
+
+                updateGizmoTransform();
+                renderProperties();
+            }
+        }
+    });
+
+    window.addEventListener('mouseup', () => { 
+        isMouseDown = false; 
+        isDraggingGizmo = false;
+        activeGizmoAxis = null;
+        activeGizmoType = null;
+    });
+
+    container.addEventListener('contextmenu', (e) => e.preventDefault());
+
+    container.addEventListener('wheel', (e) => {
+        cameraDistance += e.deltaY * 0.02;
+        cameraDistance = Math.max(5, Math.min(150, cameraDistance));
+        updateCameraPosition();
+    });
+
+    function createPart(px = 0, py = 0.5, pz = 0, sx = 4, sy = 1, sz = 2, colorHex = 0xa3a2a5, name = "", isTool = false) {
+        let mesh;
+        if (isTool) {
+            const geo = new THREE.BufferGeometry();
+            const mat = new THREE.MeshBasicMaterial({ visible: false });
+            mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(0, 0, 0);
+        } else {
+            const geo = new THREE.BoxGeometry(sx, sy, sz);
+            const mat = new THREE.MeshLambertMaterial({ color: colorHex });
+            mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(px, py, pz);
+        }
+
+        mesh.userData = {
+            partName: name || ("Part" + partCounter++),
+            sx: sx,
+            sy: sy,
+            sz: sz,
+            colorHex: "#" + colorHex.toString(16).padStart(6, '0'),
+            isToolItem: isTool
+        };
+
+        if (!isTool) {
+            scene.add(mesh);
+            parts.push(mesh);
+        } else {
+            parts.push(mesh);
+        }
+
+        rebuildWorkspaceTree();
+        return mesh;
+    }
+
+    function insertBlock() {
+        const p = createPart(0, 2, 0, 4, 1, 2, 0xa3a2a5);
+        selectPart(p);
+    }
+
+    function insertSwordTool() {
+        if (hasSwordTool) {
+            alert("A Sword tool is already added to this workspace!");
+            return;
+        }
+        hasSwordTool = true;
+        const p = createPart(0, 0, 0, 0, 0, 0, 0, "Sword", true);
+        selectPart(p);
+    }
+
+    function selectPart(part) {
+        selectedPart = part;
+        if (part && !part.userData.isToolItem) {
+            selectionBox.setFromObject(part);
+            selectionBox.visible = true;
+        } else {
+            selectionBox.visible = false;
+        }
+        updateGizmoTransform();
+        rebuildWorkspaceTree();
+        renderProperties();
+    }
+
+    function selectRoot() {
+        selectPart(null);
+    }
+
+    function deleteSelected() {
+        if (!selectedPart) return;
+        if (selectedPart.userData.partName === "Sword" && selectedPart.userData.isToolItem) {
+            hasSwordTool = false;
+        }
+        scene.remove(selectedPart);
+        const idx = parts.indexOf(selectedPart);
+        if (idx > -1) parts.splice(idx, 1);
+        selectPart(null);
+    }
+
+    function setTool(tool) {
+        currentTool = tool;
+        document.getElementById('btn-select').classList.toggle('active', tool === 'select');
+        document.getElementById('btn-move').classList.toggle('active', tool === 'move');
+        document.getElementById('btn-scale').classList.toggle('active', tool === 'scale');
+        document.getElementById('status-bar').innerText = "Tool: " + tool.charAt(0).toUpperCase() + tool.slice(1);
+        updateGizmoTransform();
+    }
+
+    function rebuildWorkspaceTree() {
+        const treeEl = document.getElementById('workspace-tree');
+        treeEl.innerHTML = '';
+
+        parts.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'tree-node' + (selectedPart === p ? ' selected' : '');
+            div.onclick = (e) => {
+                e.stopPropagation();
+                selectPart(p);
+            };
+
+            div.innerHTML = `<span>${p.userData.partName}</span>`;
+            treeEl.appendChild(div);
+        });
+    }
+
+    function renderProperties() {
+        const panel = document.getElementById('properties-panel');
+        if (!selectedPart) {
+            panel.innerHTML = '<p style="font-style: italic; color: #666;">No item selected.</p>';
+            return;
+        }
+
+        const p = selectedPart;
+        const u = p.userData;
+
+        if (u.isToolItem) {
+            panel.innerHTML = `
+                <div class="prop-row"><label>Name:</label><input type="text" id="prop-name" value="${u.partName}" readonly style="background:#eee;" /></div>
+                <p style="margin-top:10px; font-style:italic; color:#444;">Tool configuration item. Adds 'givetool = sword' on save.</p>
+            `;
+            return;
+        }
+
+        let html = `
+            <div class="prop-row"><label>Name:</label><input type="text" id="prop-name" value="${u.partName}" onchange="updatePartProp('name', this.value)"/></div>
+            <div class="prop-row"><label>Position X:</label><input type="number" step="0.5" value="${p.position.x}" onchange="updatePartProp('px', this.value)"/></div>
+            <div class="prop-row"><label>Position Y:</label><input type="number" step="0.5" value="${p.position.y}" onchange="updatePartProp('py', this.value)"/></div>
+            <div class="prop-row"><label>Position Z:</label><input type="number" step="0.5" value="${p.position.z}" onchange="updatePartProp('pz', this.value)"/></div>
+            <div class="prop-row"><label>Size X:</label><input type="number" step="0.5" value="${u.sx}" onchange="updatePartProp('sx', this.value)"/></div>
+            <div class="prop-row"><label>Size Y:</label><input type="number" step="0.5" value="${u.sy}" onchange="updatePartProp('sy', this.value)"/></div>
+            <div class="prop-row"><label>Size Z:</label><input type="number" step="0.5" value="${u.sz}" onchange="updatePartProp('sz', this.value)"/></div>
+            <div style="margin-top:8px; font-weight:bold; font-size:11px;">Color Palette:</div>
+            <div id="color-palette">
+        `;
+
+        retroPalette.forEach(hex => {
+            html += `<div class="color-swatch" style="background:${hex};" onclick="updatePartProp('color', '${hex}')"></div>`;
+        });
+
+        html += `</div>`;
+        panel.innerHTML = html;
+    }
+
+    function updatePartProp(prop, val) {
+        if (!selectedPart || selectedPart.userData.isToolItem) return;
+
+        if (prop === 'name') selectedPart.userData.partName = val;
+        else if (prop === 'px') selectedPart.position.x = parseFloat(val);
+        else if (prop === 'py') selectedPart.position.y = parseFloat(val);
+        else if (prop === 'pz') selectedPart.position.z = parseFloat(val);
+        else if (prop === 'sx' || prop === 'sy' || prop === 'sz') {
+            if (prop === 'sx') selectedPart.userData.sx = Math.max(0.1, parseFloat(val));
+            if (prop === 'sy') selectedPart.userData.sy = Math.max(0.1, parseFloat(val));
+            if (prop === 'sz') selectedPart.userData.sz = Math.max(0.1, parseFloat(val));
+            
+            selectedPart.geometry.dispose();
+            selectedPart.geometry = new THREE.BoxGeometry(selectedPart.userData.sx, selectedPart.userData.sy, selectedPart.userData.sz);
+        } else if (prop === 'color') {
+            selectedPart.userData.colorHex = val;
+            selectedPart.material.color.set(val);
+        }
+
+        selectionBox.setFromObject(selectedPart);
+        updateGizmoTransform();
+        rebuildWorkspaceTree();
+        renderProperties();
+    }
+
+    function parseAndRenderBDVR(bdvrText) {
+        if (!bdvrText || !bdvrText.trim()) return;
+        const lines = bdvrText.split(/\r?\n/);
+        lines.forEach(line => {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed.startsWith('#')) return;
+
+            if (trimmed.toLowerCase().includes('givetool') && trimmed.toLowerCase().includes('sword')) {
+                hasSwordTool = true;
+                createPart(0, 0, 0, 0, 0, 0, 0, "Sword", true);
+                return;
+            }
+
+            const partsArr = trimmed.split(',');
+            if (partsArr.length >= 7) {
+                const px = parseFloat(partsArr[0]);
+                const py = parseFloat(partsArr[1]);
+                const pz = parseFloat(partsArr[2]);
+                const sx = parseFloat(partsArr[3]);
+                const sy = parseFloat(partsArr[4]);
+                const sz = parseFloat(partsArr[5]);
+                const colorRaw = partsArr[6].trim().replace('#', '');
+                const colorHex = parseInt(colorRaw, 16);
+
+                createPart(px, py, pz, sx, sy, sz, isNaN(colorHex) ? 0xa3a2a5 : colorHex);
+            }
+        });
+    }
+
+    function saveMap() {
+        let bdvrLines = [];
+
+        if (hasSwordTool) {
+            bdvrLines.push("givetool = sword");
+        }
+
+        parts.forEach(p => {
+            if (!p.userData.isToolItem) {
+                const px = p.position.x.toFixed(2);
+                const py = p.position.y.toFixed(2);
+                const pz = p.position.z.toFixed(2);
+                const sx = p.userData.sx.toFixed(2);
+                const sy = p.userData.sy.toFixed(2);
+                const sz = p.userData.sz.toFixed(2);
+                const col = p.userData.colorHex;
+
+                bdvrLines.push(`${px},${py},${pz},${sx},${sy},${sz},${col}`);
+            }
+        });
+
+        const outputData = bdvrLines.join('\n');
+        const customNameField = document.getElementById('save-name-input').value.trim();
+        
+        const validNamePattern = /^[a-zA-Z0-9_\-]+$/;
+        if (customNameField && !validNamePattern.test(customNameField)) {
+            alert("Error: Filenames can only contain letters, numbers, underscores, and hyphens!");
+            return;
+        }
+
+        const targetGame = customNameField ? customNameField : (safeGame || "map");
+        const targetPlayer = safePlayer ? safePlayer : "Developer";
+
+        const saveUrl = `studio.aspx?action=save&playername=${encodeURIComponent(targetPlayer)}&gamename=${encodeURIComponent(targetGame)}`;
+
+        fetch(saveUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'data=' + encodeURIComponent(outputData)
+        })
+        .then(res => res.text())
+        .then(res => {
+            if (res.includes("SUCCESS")) {
+                alert(`Game successfully saved to /uploads/${targetPlayer}/${targetGame}.bdvr!`);
+            } else {
+                alert("Failed to save: " + res);
+            }
+        })
+        .catch(err => alert("Error saving map: " + err));
+    }
+
+    if (isStudioRunning) {
+        parseAndRenderBDVR(serverMapData);
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+        const moveSpeed = 0.5;
+        const forward = new THREE.Vector3(Math.sin(cameraYaw), 0, Math.cos(cameraYaw)).normalize();
+        const right = new THREE.Vector3(Math.sin(cameraYaw - Math.PI / 2), 0, Math.cos(cameraYaw - Math.PI / 2)).normalize();
+
+        let moved = false;
+        if (keysPressed['w']) { targetLook.addScaledVector(forward, -moveSpeed); moved = true; }
+        if (keysPressed['s']) { targetLook.addScaledVector(forward, moveSpeed); moved = true; }
+        if (keysPressed['a']) { targetLook.addScaledVector(right, moveSpeed); moved = true; }
+        if (keysPressed['d']) { targetLook.addScaledVector(right, -moveSpeed); moved = true; }
+
+        if (moved) {
+            updateCameraPosition();
+        }
+
+        if (selectedPart && !selectedPart.userData.isToolItem) {
+            selectionBox.setFromObject(selectedPart);
+        }
+        renderer.render(scene, camera);
+    }
+    requestAnimationFrame(animate);
+
+    window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to Buildverse!</title>
+    <style>
+        body { background-color: #ffffff; margin: 0; padding: 0; font-family: Arial, sans-serif; color: #000000; }
+        .logo-table { width: 100%; height: 140px; background: #555 url('logo_bg.png') center center/cover no-repeat; border-collapse: collapse; border: none; margin: 0; }
+        .logo-table td { padding: 0; text-align: center; vertical-align: middle; width: 100%; height: 100%; }
+        .logo { width: 100%; height: 100%; display: block; object-fit: fill; }
+        .nav-bar { background-color: #1a1f59; color: #ffffff; text-align: center; padding: 10px 0; font-size: 18px; font-weight: bold; letter-spacing: 1px; }
+        .nav-bar a { color: #ffffff; text-decoration: none; margin: 0 15px; }
+        .nav-bar a:hover { text-decoration: underline; }
+        .main-layout { width: 100%; margin: 20px 0; padding: 0 40px; position: relative; box-sizing: border-box; }
+        .login-box { width: 380px; border: 1px solid #777777; padding: 25px; background-color: #ffffff; float: left; box-sizing: border-box; }
+        .login-box label { display: block; font-size: 16px; font-weight: bold; margin-bottom: 6px; }
+        .login-box input[type="text"], .login-box input[type="password"] { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #999; box-sizing: border-box; color: #000000; font-size: 14px; background-color: #fff; }
+        .login-btn { background: linear-gradient(to bottom, #2563eb, #1d4ed8); color: #ffffff; border: 1px solid #000000; padding: 8px 22px; font-weight: bold; font-size: 16px; cursor: pointer; text-transform: lowercase; }
+        .create-account-link { float: right; font-size: 13px; color: #0000ff; text-decoration: none; margin-top: 12px; }
+        .create-account-link:hover { text-decoration: underline; }
+        .top-right-greeting { float: right; font-size: 22px; font-weight: normal; margin-top: 5px; margin-right: 40px; margin-bottom: 20px; }
+        .bottom-left-info { clear: both; padding-top: 40px; float: left; }
+        .bottom-left-info a { font-size: 22px; font-weight: bold; color: #0000ff; text-decoration: underline; }
+        .bottom-right-avatar { position: fixed; bottom: 20px; right: 20px; text-align: right; }
+        .bottom-right-avatar img { width: 90px; height: auto; }
+        .error-message { margin-top: 10px; font-weight: bold; font-size: 13px; display: block; }
+        .clearfix::after { content: ""; clear: both; display: table; }
+    </style>
+</head>
+<body>
+    <form method="post" action="./default.aspx" id="form1">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="wj5eMgyOT/DV2a6lt9t4iSOcCogprb9/GsSFVBG7jcRTUt2Z+NzIL7PRwD2mlN+jL7tb/P1wvva1dGRdJKqB1SYAsfoP/PPxvIXOAP9QTBizKnwR" />
+
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="CA0B0334" />
+<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="Ev91+y5ZegiNJv9ReD7aXpC3em7iQMBW5SW+0tdGkDUFnEL89rmJ1UNJrHhvSrwJYL/FiUUMU7adn85QKkH+lYyY0snx4r/BEhwKqjkrhUDQny9UcccFfSlWsIF7BOxkzuV0596GbcQ2MuhjjLRpkfFGOAoYRtxbOUqMntNVDL6s8gGL" />
+        <table class="logo-table"><tr><td><a href="default.aspx"><img src="logo.png" alt="BUILDVERSE" class="logo"></a></td></tr></table>
+        <div class="nav-bar">
+            <a href="default.aspx">HOME</a>
+            <a href="sets.aspx">SETS</a>
+            <a href="create.aspx">CREATE</a>
+            <a href="download.aspx">DOWNLOAD</a>
+            <a href="people.aspx">PEOPLE</a>
+        </div>
+        <div class="main-layout clearfix">
+            <div class="top-right-greeting">Hello!, User</div>
+            <div class="login-box">
+                <label>Username:</label>
+                <input name="txtUsername" type="text" id="txtUsername" />
+                <label>Password:</label>
+                <input name="txtPassword" type="password" id="txtPassword" />
+                <label>Retype Password:</label>
+                <input name="txtRetypePassword" type="password" id="txtRetypePassword" />
+                <div class="clearfix">
+                    <input type="submit" name="btnLogin" value="log in" id="btnLogin" class="login-btn" />
+                    <a href="register.aspx" class="create-account-link">Create account</a>
+                </div>
+                <span id="lblError" class="error-message"><font color="Red"></font></span>
+            </div>
+            <span id="lblUserCount" style="display:none;">161</span>
+            <div class="bottom-left-info"><a href="info.aspx">INFO</a></div>
+            <div class="bottom-right-avatar"><img src="costume1.svg" alt="Buildverse Studio icon?"></div>
+        </div>
+    </form>
+</body>
+</html>

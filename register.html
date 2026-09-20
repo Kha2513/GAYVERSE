@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Слишком длинный путь или имя файла. Полное имя файла должно содержать меньше 260 знаков, а имя каталога - меньше 248 знаков.</title>
+        <meta name="viewport" content="width=device-width" />
+        <style>
+         body {font-family:"Verdana";font-weight:normal;font-size: .7em;color:black;} 
+         p {font-family:"Verdana";font-weight:normal;color:black;margin-top: -5px}
+         b {font-family:"Verdana";font-weight:bold;color:black;margin-top: -5px}
+         H1 { font-family:"Verdana";font-weight:normal;font-size:18pt;color:red }
+         H2 { font-family:"Verdana";font-weight:normal;font-size:14pt;color:maroon }
+         pre {font-family:"Consolas","Lucida Console",Monospace;font-size:11pt;margin:0;padding:0.5em;line-height:14pt}
+         .marker {font-weight: bold; color: black;text-decoration: none;}
+         .version {color: gray;}
+         .error {margin-bottom: 10px;}
+         .expandable { text-decoration:underline; font-weight:bold; color:navy; cursor:pointer; }
+         @media screen and (max-width: 639px) {
+          pre { width: 440px; overflow: auto; white-space: pre-wrap; word-wrap: break-word; }
+         }
+         @media screen and (max-width: 479px) {
+          pre { width: 280px; }
+         }
+        </style>
+    </head>
+
+    <body bgcolor="white">
+
+            <span><H1>Ошибка сервера в приложении '/'.<hr width=100% size=1 color=silver></H1>
+
+            <h2> <i>Слишком длинный путь или имя файла. Полное имя файла должно содержать меньше 260 знаков, а имя каталога - меньше 248 знаков.</i> </h2></span>
+
+            <font face="Arial, Helvetica, Geneva, SunSans-Regular, sans-serif ">
+
+            <b> Описание: </b>Необработанное исключение при выполнении текущего веб-запроса. Изучите трассировку стека для получения дополнительных сведений о данной ошибке и о вызвавшем ее фрагменте кода.
+
+            <br><br>
+
+            <b> Сведения об исключении: </b>System.IO.PathTooLongException: Слишком длинный путь или имя файла. Полное имя файла должно содержать меньше 260 знаков, а имя каталога - меньше 248 знаков.<br><br>
+
+            <b>Ошибка источника:</b> <br><br>
+
+            <table width=100% bgcolor="#ffffcc">
+               <tr>
+                  <td>
+                      <code>
+
+Код ресурса, сгенерировавший это необработанное исключение, может быть отображен только после компиляции в режиме отладки. Для этого выполните одно из указанных ниже действий, а затем перейдите по следующему URL-адресу:<br><br>1. Добавьте директиву &quot;Debug=true&quot; в начало файла, сгенерировавшего ошибку. &nbsp;Пример:<br><br> &nbsp;&nbsp;&lt;%@ Page Language=&quot;C#&quot; Debug=&quot;true&quot; %&gt;<br><br>или:<br><br>2) Добавьте следующий раздел в файл конфигурации приложения:<br><br>&lt;configuration&gt;<br> &nbsp;&nbsp;&nbsp;&lt;system.web&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;compilation debug=&quot;true&quot;/&gt;<br> &nbsp;&nbsp;&nbsp;&lt;/system.web&gt;<br>&lt;/configuration&gt; <br><br> Следует учесть, что во втором случае в режиме отладки будут скомпилированы все файлы приложения. Первый метод позволяет скомпилировать в режиме отладки только определенный файл.<br><br>Важное замечание. При выполнении приложений в режиме отладки падает производительность и увеличивается расход памяти. Прежде чем &nbsp;развертывать приложение как часть основного сценария, &nbsp;убедитесь в том, что режим отладки для приложения отключен.                      </code>
+
+                  </td>
+               </tr>
+            </table>
+
+            <br>
+
+            <b>Трассировка стека:</b> <br><br>
+
+            <table width=100% bgcolor="#ffffcc">
+               <tr>
+                  <td>
+                      <code><pre>
+
+[PathTooLongException: Слишком длинный путь или имя файла. Полное имя файла должно содержать меньше 260 знаков, а имя каталога - меньше 248 знаков.]
+   System.IO.PathHelper.GetFullPathName() +14505025
+   System.IO.Path.LegacyNormalizePath(String path, Boolean fullCheck, Int32 maxPathLength, Boolean expandShortPaths) +1614
+   System.IO.Path.GetFullPathInternal(String path) +139
+   System.Security.Util.StringExpressionSet.CanonicalizePath(String path, Boolean needFullPath) +38
+   System.Security.Util.StringExpressionSet.CreateListFromExpressions(String[] str, Boolean needFullPath) +316
+   System.Security.Permissions.FileIOPermission.AddPathList(FileIOPermissionAccess access, AccessControlActions control, String[] pathListOrig, Boolean checkForDuplicates, Boolean needFullPath, Boolean copyPathList) +121
+   System.Security.Permissions.FileIOPermission..ctor(FileIOPermissionAccess access, String path) +94
+   System.Web.InternalSecurityPermissions.PathDiscovery(String path) +42
+   System.Web.HttpRequest.MapPath(VirtualPath virtualPath, VirtualPath baseVirtualDir, Boolean allowCrossAppMapping) +180
+   System.Web.HttpServerUtility.MapPath(String path) +130
+   ASP.register_aspx.Page_Load(Object sender, EventArgs e) +384
+   System.Web.UI.Control.OnLoad(EventArgs e) +108
+   System.Web.UI.Control.LoadRecursive() +90
+   System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint) +1602
+</pre>                      </code>
+
+                  </td>
+               </tr>
+            </table>
+
+            <br>
+
+            <hr width=100% size=1 color=silver>
+
+            <b>Информация о версии:</b>&nbsp;Платформа Microsoft .NET Framework, версия:4.0.30319; ASP.NET, версия:4.8.9344.0
+
+            </font>
+
+    </body>
+</html>
+<!-- 
+[PathTooLongException]: Слишком длинный путь или имя файла. Полное имя файла должно содержать меньше 260 знаков, а имя каталога - меньше 248 знаков.
+   в System.IO.PathHelper.GetFullPathName()
+   в System.IO.Path.LegacyNormalizePath(String path, Boolean fullCheck, Int32 maxPathLength, Boolean expandShortPaths)
+   в System.IO.Path.GetFullPathInternal(String path)
+   в System.Security.Util.StringExpressionSet.CanonicalizePath(String path, Boolean needFullPath)
+   в System.Security.Util.StringExpressionSet.CreateListFromExpressions(String[] str, Boolean needFullPath)
+   в System.Security.Permissions.FileIOPermission.AddPathList(FileIOPermissionAccess access, AccessControlActions control, String[] pathListOrig, Boolean checkForDuplicates, Boolean needFullPath, Boolean copyPathList)
+   в System.Security.Permissions.FileIOPermission..ctor(FileIOPermissionAccess access, String path)
+   в System.Web.InternalSecurityPermissions.PathDiscovery(String path)
+   в System.Web.HttpRequest.MapPath(VirtualPath virtualPath, VirtualPath baseVirtualDir, Boolean allowCrossAppMapping)
+   в System.Web.HttpServerUtility.MapPath(String path)
+   в ASP.register_aspx.Page_Load(Object sender, EventArgs e)
+   в System.Web.UI.Control.OnLoad(EventArgs e)
+   в System.Web.UI.Control.LoadRecursive()
+   в System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+[HttpUnhandledException]: Выдано исключение типа &quot;System.Web.HttpUnhandledException&quot;.
+   в System.Web.UI.Page.HandleError(Exception e)
+   в System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+   в System.Web.UI.Page.ProcessRequest(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+   в System.Web.UI.Page.ProcessRequest()
+   в System.Web.UI.Page.ProcessRequest(HttpContext context)
+   в System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   в System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
+   в System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+--><!-- 
+Эта страница ошибки может содержать важные данные, так как ASP.NET настроено на показ подробных сообщений об ошибках с помощью &lt;customErrors mode="Off"/&gt;. Используйте на предприятиях &lt;customErrors mode="On"/&gt; или &lt;customErrors mode="RemoteOnly"/&gt;.-->
